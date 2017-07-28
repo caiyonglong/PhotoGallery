@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PhotoGallery</string>
+    <string name="info_empty">暂无图片</string>
+</resources>
