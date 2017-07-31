@@ -7,8 +7,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -42,8 +46,8 @@ public class PhotoGalleryFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
-        new FetchItemsTask().execute();
+        setHasOptionsMenu(true);
+        updateItems();
         mThumbnailDownloader = new ThumbnailDownloader<>();
         mThumbnailDownloader.start();
         mThumbnailDownloader.getLooper();
@@ -60,11 +64,64 @@ public class PhotoGalleryFragment extends Fragment {
                 .inflate(inflater, R.layout.fragment_photo_gallery, container, false);
 
         binding.photoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        adapter = new PhotoGalleryAdapter(mItems);
-        binding.photoRecyclerView.setAdapter(adapter);
+        setupAdapter();
         return binding.getRoot();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mThumbnailDownloader.quit();
+        Log.i(TAG, "Background Thread destroyed");
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_photo_grallery, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d(TAG, "onQueryTextSubmit: " + query);
+                QueryPreferences.setStoreQuery(getActivity(), query);
+                updateItems();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d(TAG, "onQueryTextChange: " + newText);
+                return false;
+            }
+        });
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String query = QueryPreferences.getStoreQuery(getActivity());
+                searchView.setQuery(query, false);
+            }
+        });
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_clear:
+                QueryPreferences.setStoreQuery(getActivity(), null);
+                updateItems();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void updateItems() {
+        String query = QueryPreferences.getStoreQuery(getActivity());
+        new FetchItemsTask(query).execute();
+    }
 
     private class PhotoGalleryHolder extends RecyclerView.ViewHolder {
         private ListItemViewBinding mBinding;
@@ -116,26 +173,36 @@ public class PhotoGalleryFragment extends Fragment {
     List<GalleryItem> mItems = new ArrayList<>();
 
     private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
+
+        private String mQuery;
+
+        public FetchItemsTask(String query) {
+            mQuery = query;
+        }
+
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
 
-            return new FlickerFetchr().fetchItems();
+            if (mQuery != null) {
+                return new FlickerFetchr().searchPhotos(mQuery);
+            } else {
+                return new FlickerFetchr().fetchRecentPhotos();
+            }
         }
 
         @Override
         protected void onPostExecute(List<GalleryItem> items) {
             mItems = items;
-            adapter.notifyDataSetChanged();
+            setupAdapter();
             Log.d(TAG, mItems.size() + "---");
-            binding.emptyView.setVisibility(mItems.size() > 0 ? View.GONE : View.VISIBLE);
-            binding.photoRecyclerView.setAdapter(new PhotoGalleryAdapter(mItems));
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mThumbnailDownloader.quit();
-        Log.i(TAG, "Background Thread destroyed");
+    private void setupAdapter() {
+        adapter = new PhotoGalleryAdapter(mItems);
+        adapter.notifyDataSetChanged();
+        binding.emptyView.setVisibility(mItems.size() > 0 ? View.GONE : View.VISIBLE);
+        binding.photoRecyclerView.setAdapter(adapter);
     }
+
 }

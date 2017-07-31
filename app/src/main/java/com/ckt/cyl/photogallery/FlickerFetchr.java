@@ -25,6 +25,18 @@ import java.util.List;
 
 public class FlickerFetchr {
     private static final String TAG = "PhotoGalleryFragment";
+    private static final String FETCH_RECENTS_METHOD = "tag1";
+    private static final String SEARCH_METHOD = "tag1";
+    private static final Uri ENDPOINT = Uri
+            .parse("http://image.baidu.com/channel/listjson")
+            .buildUpon()
+            .appendQueryParameter("pn", "0")
+            .appendQueryParameter("rn", "10")
+//            .appendQueryParameter("tag1", "美女")
+            .appendQueryParameter("tag2", "全部")
+//            .appendQueryParameter("ftags", "小清新")
+            .appendQueryParameter("ie", "utf8")
+            .build();
 
     public byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
@@ -55,21 +67,23 @@ public class FlickerFetchr {
         return new String(getUrlBytes(urlSpec));
     }
 
-    public List<GalleryItem> fetchItems() {
+    public List<GalleryItem> fetchRecentPhotos() {
+        String url = buildUrl(SEARCH_METHOD, null);
+        return downLoadGalleryItems(url);
+    }
+
+    public List<GalleryItem> searchPhotos(String query) {
+        String url = buildUrl(SEARCH_METHOD, query);
+        return downLoadGalleryItems(url);
+    }
+
+    public List<GalleryItem> downLoadGalleryItems(String url) {
         List<GalleryItem> items = new ArrayList<>();
 
         /**http://image.baidu.com/channel/listjson?pn=0&rn=30&tag1=美女&tag2=全部&ftags=小清新&ie=utf8
          */
         try {
-            String url = Uri.parse("http://image.baidu.com/channel/listjson")
-                    .buildUpon()
-                    .appendQueryParameter("pn", "0")
-                    .appendQueryParameter("rn", "10")
-                    .appendQueryParameter("tag1", "美女")
-                    .appendQueryParameter("tag2", "全部")
-                    .appendQueryParameter("ftags", "小清新")
-                    .appendQueryParameter("ie", "utf8")
-                    .build().toString();
+//            String url =
             String jsonString = getUrlString(url);
             Log.d(TAG, "Fetched contents of URL: " + jsonString);
             /**
@@ -98,6 +112,12 @@ public class FlickerFetchr {
         return items;
     }
 
+    private String buildUrl(String method, String query) {
+        Uri.Builder builder = ENDPOINT.buildUpon()
+                .appendQueryParameter(method, query);
+        return builder.build().toString();
+    }
+
     /**
      * 相对于一般方式解析方法
      *
@@ -113,9 +133,13 @@ public class FlickerFetchr {
             JSONObject photoObject = photosJsonArray.getJSONObject(i);
 
             GalleryItem item = new GalleryItem();
+            if (photoObject.optString("id") == null) {
+                continue;
+            }
+
             item.setId(photoObject.getString("id"));
             item.setAbs(photoObject.getString("abs"));
-//            item.setDes(photoObject.getString("des"));
+            item.setDes(photoObject.optString("des"));
             //url有可能为空
             if (photoObject.getString("image_url") == null) {
                 continue;
