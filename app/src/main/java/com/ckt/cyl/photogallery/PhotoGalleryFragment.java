@@ -1,5 +1,6 @@
 package com.ckt.cyl.photogallery;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,7 +28,7 @@ import java.util.List;
  * Created by D22434 on 2017/7/28.
  */
 
-public class PhotoGalleryFragment extends Fragment {
+public class PhotoGalleryFragment extends VisibleFragment {
     private static final String TAG = "PhotoGalleryFragment";
     PhotoGalleryAdapter adapter;
     private FragmentPhotoGalleryBinding binding;
@@ -48,6 +49,8 @@ public class PhotoGalleryFragment extends Fragment {
         setRetainInstance(true);
         setHasOptionsMenu(true);
         updateItems();
+
+
         mThumbnailDownloader = new ThumbnailDownloader<>();
         mThumbnailDownloader.start();
         mThumbnailDownloader.getLooper();
@@ -105,6 +108,13 @@ public class PhotoGalleryFragment extends Fragment {
             }
         });
 
+        MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_polling);
+        if (PollService.isServiceAlarmOn(getActivity())) {
+            toggleItem.setTitle(R.string.stop_polling);
+        } else {
+            toggleItem.setTitle(R.string.start_polling);
+        }
+
     }
 
     @Override
@@ -113,6 +123,11 @@ public class PhotoGalleryFragment extends Fragment {
             case R.id.menu_item_clear:
                 QueryPreferences.setStoreQuery(getActivity(), null);
                 updateItems();
+                return true;
+            case R.id.menu_item_toggle_polling:
+                boolean shouldStartAlarm = !PollService.isServiceAlarmOn(getActivity());
+                PollService.setServiceAlarm(getActivity(), shouldStartAlarm);
+                getActivity().invalidateOptionsMenu();
                 return true;
         }
         return super.onOptionsItemSelected(item);
