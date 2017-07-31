@@ -1,4 +1,4 @@
-package com.ckt.cyl.photogallery;
+package com.ckt.cyl.photogallery.fragment;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -8,6 +8,8 @@ import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.ckt.cyl.photogallery.PollService;
 
 /**
  * Created by D22434 on 2017/7/31.

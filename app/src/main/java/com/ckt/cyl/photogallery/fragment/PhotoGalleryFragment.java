@@ -1,11 +1,10 @@
-package com.ckt.cyl.photogallery;
+package com.ckt.cyl.photogallery.fragment;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -18,6 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+import com.ckt.cyl.photogallery.FlickerFetchr;
+import com.ckt.cyl.photogallery.GalleryItem;
+import com.ckt.cyl.photogallery.GalleryViewModel;
+import com.ckt.cyl.photogallery.PhotoPageActivity;
+import com.ckt.cyl.photogallery.PollService;
+import com.ckt.cyl.photogallery.QueryPreferences;
+import com.ckt.cyl.photogallery.R;
+import com.ckt.cyl.photogallery.ThumbnailDownloader;
 import com.ckt.cyl.photogallery.databinding.FragmentPhotoGalleryBinding;
 import com.ckt.cyl.photogallery.databinding.ListItemViewBinding;
 
@@ -147,13 +154,20 @@ public class PhotoGalleryFragment extends VisibleFragment {
             mBinding = binding;
         }
 
-        public void bind(GalleryItem item) {
+        public void bind(final GalleryItem item) {
             galleryViewModel = new GalleryViewModel(item);
             mBinding.setGallery(galleryViewModel);
 
             //更新绑定数据
             mBinding.executePendingBindings();
 
+            mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = PhotoPageActivity.newIntent(getActivity(), item.getPhotoUri());
+                    startActivity(i);
+                }
+            });
         }
     }
 

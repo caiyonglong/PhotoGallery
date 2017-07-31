@@ -1,5 +1,7 @@
 package com.ckt.cyl.photogallery;
 
+import android.net.Uri;
+
 /**
  * Created by D22434 on 2017/7/28.
  */
@@ -50,5 +52,10 @@ public class GalleryItem {
         this.des = des;
     }
 
+    public Uri getPhotoUri() {
+        return Uri.parse(image_url)
+                .buildUpon()
+                .build();
+    }
 
 }
