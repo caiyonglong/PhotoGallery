@@ -11,9 +11,10 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+
+import com.ckt.cyl.photogallery.activities.PhotoGalleryActivity;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;

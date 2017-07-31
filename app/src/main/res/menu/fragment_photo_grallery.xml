@@ -6,13 +6,18 @@
         android:title="@string/search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/menu_item_clear"
         android:title="@string/clear_search"
         app:showAsAction="never" />
-
-    <item android:id="@+id/menu_item_toggle_polling"
+    <item
+        android:id="@+id/menu_item_toggle_polling"
         android:title="@string/start_polling"
-        app:showAsAction="ifRoom"
-        />
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_item_draw"
+        android:title="@string/start_draw"
+        app:showAsAction="never" />
 </menu>

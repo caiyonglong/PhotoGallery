@@ -20,7 +20,8 @@ import android.view.ViewGroup;
 import com.ckt.cyl.photogallery.FlickerFetchr;
 import com.ckt.cyl.photogallery.GalleryItem;
 import com.ckt.cyl.photogallery.GalleryViewModel;
-import com.ckt.cyl.photogallery.PhotoPageActivity;
+import com.ckt.cyl.photogallery.activities.DragAndDrawActivity;
+import com.ckt.cyl.photogallery.activities.PhotoPageActivity;
 import com.ckt.cyl.photogallery.PollService;
 import com.ckt.cyl.photogallery.QueryPreferences;
 import com.ckt.cyl.photogallery.R;
@@ -130,6 +131,10 @@ public class PhotoGalleryFragment extends VisibleFragment {
             case R.id.menu_item_clear:
                 QueryPreferences.setStoreQuery(getActivity(), null);
                 updateItems();
+                return true;
+            case R.id.menu_item_draw:
+                Intent intent = DragAndDrawActivity.newIntent(getActivity());
+                startActivity(intent);
                 return true;
             case R.id.menu_item_toggle_polling:
                 boolean shouldStartAlarm = !PollService.isServiceAlarmOn(getActivity());

@@ -1,11 +1,10 @@
-package com.ckt.cyl.photogallery;
+package com.ckt.cyl.photogallery.activities;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 
-import com.ckt.cyl.photogallery.fragment.PhotoGalleryFragment;
 import com.ckt.cyl.photogallery.fragment.PhotoPageFragment;
 
 public class PhotoPageActivity extends SingleFragmentActivity {

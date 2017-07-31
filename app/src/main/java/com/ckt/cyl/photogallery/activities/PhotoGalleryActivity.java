@@ -1,4 +1,4 @@
-package com.ckt.cyl.photogallery;
+package com.ckt.cyl.photogallery.activities;
 
 import android.content.Context;
 import android.content.Intent;
