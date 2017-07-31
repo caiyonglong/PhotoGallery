@@ -115,7 +115,7 @@ public class FlickerFetchr {
             GalleryItem item = new GalleryItem();
             item.setId(photoObject.getString("id"));
             item.setAbs(photoObject.getString("abs"));
-            item.setDes(photoObject.getString("des"));
+//            item.setDes(photoObject.getString("des"));
             //url有可能为空
             if (photoObject.getString("image_url") == null) {
                 continue;

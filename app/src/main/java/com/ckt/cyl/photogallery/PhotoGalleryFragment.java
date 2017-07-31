@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,8 @@ import java.util.List;
 public class PhotoGalleryFragment extends Fragment {
     private static final String TAG = "PhotoGalleryFragment";
     PhotoGalleryAdapter adapter;
+    private FragmentPhotoGalleryBinding binding;
+    private ThumbnailDownloader<PhotoGalleryHolder> mThumbnailDownloader;
 
     public static PhotoGalleryFragment newInstance() {
 
@@ -41,13 +44,19 @@ public class PhotoGalleryFragment extends Fragment {
         setRetainInstance(true);
 
         new FetchItemsTask().execute();
+        mThumbnailDownloader = new ThumbnailDownloader<>();
+        mThumbnailDownloader.start();
+        mThumbnailDownloader.getLooper();
+        Log.i(TAG, "Background thread started");
+
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        FragmentPhotoGalleryBinding binding = DataBindingUtil
+        binding = DataBindingUtil
                 .inflate(inflater, R.layout.fragment_photo_gallery, container, false);
 
         binding.photoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
@@ -69,6 +78,7 @@ public class PhotoGalleryFragment extends Fragment {
         public void bind(GalleryItem item) {
             galleryViewModel = new GalleryViewModel(item);
             mBinding.setGallery(galleryViewModel);
+
             //更新绑定数据
             mBinding.executePendingBindings();
 
@@ -116,7 +126,16 @@ public class PhotoGalleryFragment extends Fragment {
         protected void onPostExecute(List<GalleryItem> items) {
             mItems = items;
             adapter.notifyDataSetChanged();
-//            binding.photoRecyclerView.setAdapter(new PhotoGalleryAdapter(mItems));
+            Log.d(TAG, mItems.size() + "---");
+            binding.emptyView.setVisibility(mItems.size() > 0 ? View.GONE : View.VISIBLE);
+            binding.photoRecyclerView.setAdapter(new PhotoGalleryAdapter(mItems));
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mThumbnailDownloader.quit();
+        Log.i(TAG, "Background Thread destroyed");
     }
 }

@@ -18,8 +18,14 @@ public class GalleryViewModel extends BaseObservable {
         this.item = item;
     }
 
-    @BindingAdapter("bind:img")
+    //
+    @BindingAdapter("img")
     public static void loadInternetImage(ImageView iv, String img) {
         Picasso.with(iv.getContext()).load(img).into(iv);
+
+    }
+
+    public String getImage() {
+        return item.getImage_url();
     }
 }
