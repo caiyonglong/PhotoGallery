@@ -2,8 +2,12 @@ package com.ckt.cyl.photogallery.fragment;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -60,7 +64,15 @@ public class PhotoGalleryFragment extends VisibleFragment {
         updateItems();
 
 
-        mThumbnailDownloader = new ThumbnailDownloader<>();
+        Handler reponseHandler = new Handler();
+        mThumbnailDownloader = new ThumbnailDownloader<>(reponseHandler);
+        mThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader.ThumbnailDownloadListener<PhotoGalleryHolder>() {
+            @Override
+            public void onThumbnailDownloaded(PhotoGalleryHolder target, Bitmap thumbnail) {
+                Drawable drawable = new BitmapDrawable(getResources(), thumbnail);
+                target.bindDrawable(drawable);
+            }
+        });
         mThumbnailDownloader.start();
         mThumbnailDownloader.getLooper();
         Log.i(TAG, "Background thread started");
@@ -179,6 +191,10 @@ public class PhotoGalleryFragment extends VisibleFragment {
                 }
             });
         }
+
+        public void bindDrawable(Drawable drawable) {
+            mBinding.itemImageView.setImageDrawable(drawable);
+        }
     }
 
     private class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryHolder> {
@@ -200,7 +216,9 @@ public class PhotoGalleryFragment extends VisibleFragment {
         @Override
         public void onBindViewHolder(PhotoGalleryHolder holder, int position) {
             GalleryItem item = mItems.get(position);
-            holder.bind(item);
+//            holder.bind(item);
+
+            mThumbnailDownloader.queueThumbnail(holder, item.getImage_url());
         }
 
         @Override
@@ -244,4 +262,9 @@ public class PhotoGalleryFragment extends VisibleFragment {
         binding.photoRecyclerView.setAdapter(adapter);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mThumbnailDownloader.clearQueue();
+    }
 }
