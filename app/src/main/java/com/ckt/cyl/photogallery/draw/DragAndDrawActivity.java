@@ -1,11 +1,10 @@
-package com.ckt.cyl.photogallery.activities;
+package com.ckt.cyl.photogallery.draw;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 
-import com.ckt.cyl.photogallery.fragment.DragAndDrawFragment;
+import com.ckt.cyl.photogallery.activities.SingleFragmentActivity;
 
 /**
  * Created by D22434 on 2017/7/31.

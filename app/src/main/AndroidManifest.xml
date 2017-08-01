@@ -30,7 +30,13 @@
         <activity
             android:name=".activities.PhotoPageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
-        <activity android:name=".activities.DragAndDrawActivity" />
+        <activity
+            android:name=".draw.DragAndDrawActivity"
+            android:label="@string/start_draw" />
+
+        <activity
+            android:name=".sunset.SunsetActivity"
+            android:label="@string/sunset" />
 
         <service android:name=".PollService" />
 

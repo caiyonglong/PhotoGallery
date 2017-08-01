@@ -8,4 +8,6 @@
     <string name="new_pic_title">New PhotoGallery Pictures</string>
     <string name="new_pic_text">You have new pictures int PhotoGallery</string>
     <string name="start_draw">DragAndDraw</string>
+    <string name="sunset">日落</string>
+    <string name="start_sun">sun</string>
 </resources>

@@ -20,7 +20,7 @@ import android.view.ViewGroup;
 import com.ckt.cyl.photogallery.FlickerFetchr;
 import com.ckt.cyl.photogallery.GalleryItem;
 import com.ckt.cyl.photogallery.GalleryViewModel;
-import com.ckt.cyl.photogallery.activities.DragAndDrawActivity;
+import com.ckt.cyl.photogallery.draw.DragAndDrawActivity;
 import com.ckt.cyl.photogallery.activities.PhotoPageActivity;
 import com.ckt.cyl.photogallery.PollService;
 import com.ckt.cyl.photogallery.QueryPreferences;
@@ -28,6 +28,7 @@ import com.ckt.cyl.photogallery.R;
 import com.ckt.cyl.photogallery.ThumbnailDownloader;
 import com.ckt.cyl.photogallery.databinding.FragmentPhotoGalleryBinding;
 import com.ckt.cyl.photogallery.databinding.ListItemViewBinding;
+import com.ckt.cyl.photogallery.sunset.SunsetActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,6 +136,10 @@ public class PhotoGalleryFragment extends VisibleFragment {
             case R.id.menu_item_draw:
                 Intent intent = DragAndDrawActivity.newIntent(getActivity());
                 startActivity(intent);
+                return true;
+            case R.id.menu_item_sun:
+                Intent it = SunsetActivity.newIntent(getActivity());
+                startActivity(it);
                 return true;
             case R.id.menu_item_toggle_polling:
                 boolean shouldStartAlarm = !PollService.isServiceAlarmOn(getActivity());

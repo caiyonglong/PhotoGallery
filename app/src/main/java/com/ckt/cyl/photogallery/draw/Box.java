@@ -1,4 +1,4 @@
-package com.ckt.cyl.photogallery;
+package com.ckt.cyl.photogallery.draw;
 
 import android.graphics.PointF;
 

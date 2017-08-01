@@ -20,4 +20,8 @@
         android:id="@+id/menu_item_draw"
         android:title="@string/start_draw"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_item_sun"
+        android:title="@string/start_sun"
+        app:showAsAction="never" />
 </menu>

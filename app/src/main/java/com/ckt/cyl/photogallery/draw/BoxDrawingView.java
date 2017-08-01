@@ -1,17 +1,14 @@
-package com.ckt.cyl.photogallery;
+package com.ckt.cyl.photogallery.draw;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
-import com.ckt.cyl.photogallery.Box;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +81,9 @@ public class BoxDrawingView extends View {
             case MotionEvent.ACTION_CANCEL:
                 action = "ACTION_CANCEL";
                 mCurrentBox = null;
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+
                 break;
         }
 

@@ -1,4 +1,4 @@
-package com.ckt.cyl.photogallery.fragment;
+package com.ckt.cyl.photogallery.draw;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
