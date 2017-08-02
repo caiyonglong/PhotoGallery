@@ -54,7 +54,7 @@ public class SunsetFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (MODE_SUN_STATUS == SUN_DOWN) {
-                    startAnimation();
+                    endSun();
                 } else if (MODE_SUN_STATUS == SUN_UP) {
                     startSun();
                 }
@@ -64,17 +64,45 @@ public class SunsetFragment extends Fragment {
         return binding.getRoot();
     }
 
-    public void startAnimation() {
+    public void endSun() {
         float sunYstart = binding.sun.getTop();
         float sunYend = binding.sky.getHeight();
 
-        //降落动画
+
+        float refsunYstart = binding.sunReflection.getTop();
+        float refsunYheight = binding.sunReflection.getHeight();
+
+        Log.d(TAG, "太阳 - " + binding.sun.getTop() +
+                "-" + binding.sun.getBottom() +
+                "，高度=" + binding.sun.getHeight() +
+                "，view - " + binding.sky.getHeight() +
+                "view top =" + binding.sky.getTop() +
+                "view bottom =" + binding.sky.getBottom());
+
+
+        Log.d(TAG, "阴影 - " + binding.sunReflection.getTop() +
+                "-" + binding.sunReflection.getBottom() +
+                "，高度=" + binding.sunReflection.getHeight() +
+                "，view - " + binding.sea.getHeight() +
+                "view top =" + binding.sea.getTop() +
+                "view bottom =" + binding.sea.getBottom());
+
+
+        //太阳降落动画
         ObjectAnimator heightAnimator = ObjectAnimator
                 .ofFloat(binding.sun, "y", sunYstart, sunYend)
                 .setDuration(3200);
         heightAnimator.setInterpolator(new AccelerateInterpolator());
 
-        //缩小
+
+        //倒影上升动画
+        ObjectAnimator reflectionAnimator = ObjectAnimator
+                .ofFloat(binding.sunReflection, "y", refsunYstart, -refsunYheight)
+                .setDuration(3200);
+        reflectionAnimator.setInterpolator(new AccelerateInterpolator());
+
+
+        //太阳缩小
         ObjectAnimator XAnimator = ObjectAnimator
                 .ofFloat(binding.sun, "scaleX", 1f, 0.5f)
                 .setDuration(3200);
@@ -83,8 +111,20 @@ public class SunsetFragment extends Fragment {
                 .ofFloat(binding.sun, "scaleY", 1f, 0.5f)
                 .setDuration(3200);
 
+        //倒影缩小
+        ObjectAnimator RXAnimator = ObjectAnimator
+                .ofFloat(binding.sunReflection, "scaleX", 1f, 0.5f)
+                .setDuration(3200);
+
+        ObjectAnimator RYAnimator = ObjectAnimator
+                .ofFloat(binding.sunReflection, "scaleY", 1f, 0.5f)
+                .setDuration(3200);
+
+
         XAnimator.setInterpolator(new AccelerateInterpolator());
         YAnimator.setInterpolator(new AccelerateInterpolator());
+        RXAnimator.setInterpolator(new AccelerateInterpolator());
+        RYAnimator.setInterpolator(new AccelerateInterpolator());
 
 
         //sky颜色变化
@@ -103,9 +143,12 @@ public class SunsetFragment extends Fragment {
         AnimatorSet animatorSet = new AnimatorSet();
 
         animatorSet.play(heightAnimator)
+                .with(reflectionAnimator)
                 .with(colorAnimator)
                 .with(XAnimator)
                 .with(YAnimator)
+                .with(RXAnimator)
+                .with(RYAnimator)
                 .before(nightSkyAnimator);
 
         animatorSet.addListener(new Animator.AnimatorListener() {
@@ -141,11 +184,37 @@ public class SunsetFragment extends Fragment {
         float sunYstart = binding.sun.getTop();
         float sunYend = binding.sky.getHeight();
 
-        //降落动画
+
+        float refsunYstart = binding.sunReflection.getTop();
+        float refsunYheight = binding.sunReflection.getHeight();
+
+        Log.d(TAG, "太阳 - " + binding.sun.getTop() +
+                "-" + binding.sun.getBottom() +
+                "，高度=" + binding.sun.getHeight() +
+                "，view - " + binding.sky.getHeight() +
+                "view top =" + binding.sky.getTop() +
+                "view bottom =" + binding.sky.getBottom());
+
+
+        Log.d(TAG, "阴影 - " + binding.sunReflection.getTop() +
+                "-" + binding.sunReflection.getBottom() +
+                "，高度=" + binding.sunReflection.getHeight() +
+                "，view - " + binding.sea.getHeight() +
+                "view top =" + binding.sea.getTop() +
+                "view bottom =" + binding.sea.getBottom());
+
+
+        //上升动画
         ObjectAnimator heightAnimator = ObjectAnimator
                 .ofFloat(binding.sun, "y", sunYend, sunYstart)
                 .setDuration(3200);
         heightAnimator.setInterpolator(new AccelerateInterpolator());
+
+        //倒影下降动画
+        ObjectAnimator reflectionAnimator = ObjectAnimator
+                .ofFloat(binding.sunReflection, "y", -refsunYheight, refsunYstart)
+                .setDuration(3200);
+        reflectionAnimator.setInterpolator(new AccelerateInterpolator());
 
 
         //放大
@@ -159,6 +228,19 @@ public class SunsetFragment extends Fragment {
 
         XAnimator.setInterpolator(new AccelerateInterpolator());
         YAnimator.setInterpolator(new AccelerateInterpolator());
+
+        //倒影放大
+        ObjectAnimator RXAnimator = ObjectAnimator
+                .ofFloat(binding.sunReflection, "scaleX", 0.5f, 1f)
+                .setDuration(3200);
+
+        ObjectAnimator RYAnimator = ObjectAnimator
+                .ofFloat(binding.sunReflection, "scaleY", 0.5f, 1f)
+                .setDuration(3200);
+
+
+        RXAnimator.setInterpolator(new AccelerateInterpolator());
+        RYAnimator.setInterpolator(new AccelerateInterpolator());
 
 
         //sky颜色变化
@@ -178,8 +260,11 @@ public class SunsetFragment extends Fragment {
 
         animatorSet.play(nightSkyAnimator)
                 .before(colorAnimator)
+                .with(reflectionAnimator)
                 .with(XAnimator)
                 .with(YAnimator)
+                .with(RXAnimator)
+                .with(RYAnimator)
                 .with(heightAnimator);
 
         animatorSet.addListener(new Animator.AnimatorListener() {
